@@ -48,37 +48,6 @@
  * 
  */
 
-type ResponseToSera = {
-    // If the response will play a voice message from SERA to the user
-    voice?: {
-        fileName: string;
-    };
-    text?: {
-        values: {
-            text: string;
-            color: number;
-        }[];
-    }
-    jsonPayload?: {
-        [key: string]: any;
-    };
-    redirect?: {
-        // The modem channel to redirect this message response to
-        // The computer hooked to this channel will receive the message and can play the voice or text or do some action
-        channel: number;
-    }
-}
-
-type RequestFromSera = {
-    originComputerId: string;
-    originComputerChannel: number;
-    requestId: string;
-    userId?: string;
-    jsonPayload?: {
-        [key: string]: any;
-    };
-}
-
 console.log('Importing sera_server.ts...');
 // deno-lint-ignore-file no-case-declarations
 import { Application, Router, send } from "https://deno.land/x/oak/mod.ts";
@@ -122,12 +91,6 @@ function createResponse(response: ResponseToSera) {
     return response
 }
 
-type TableServerStateReturn = {
-    isAlert: boolean;
-    isSafe: boolean;
-    isEmergency: boolean;
-    time: Date;
-}
 
 const getServerState = async () => {
     try {
@@ -201,6 +164,7 @@ const accessToken = await getAccessToken() as string;
 
 import OpenAI from "https://deno.land/x/openai@v4.20.1/mod.ts";
 import TTS from "npm:@google-cloud/text-to-speech"
+import { ResponseToSera, TableServerStateReturn } from "./util.ts";
 
 const TTSClient = new TTS.TextToSpeechClient({
     projectId: PROJECT_ID,
